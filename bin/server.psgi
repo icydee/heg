@@ -10,23 +10,30 @@ use HEG::DB;
 
 my $db_file = "$FindBin::Bin/../etc/db.sql";
 
-my $schema = HEG::DB->connect("dbi:SQLite:$db_file");
+my $db = HEG::DB->connect("dbi:SQLite:$db_file");
+$db->deploy({ add_drop_table => 1 });
 
-
-use HEG::DB::Result::Feature;
- 
 my $app = sub {
     my $env = shift;
  
     my $html = get_html();
  
     my $request = Plack::Request->new($env);
-    if ($request->param('email')) {
+    my $email = $request->param('email');
+    my $feature = $request->param('feature');
+
+    if (defined $email) {
         return sub {
             my $response = shift;
 
-            $html .= 'Email: '. $request->param('email') . '<br>';
-            $html .= 'Feature: '. $request->param('feature') . '<br>';
+            $html .= "Email: $email<br/>";
+            $html .= "Feature: $feature<br/>";
+
+            # save to database
+            $db->resultset('Feature')->create({
+                email => $email,
+                feature => $feature,
+            });
                 return $response->([
                     '200',
                     [ 'Content-Type' => 'text/html' ],
