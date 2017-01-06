@@ -1,8 +1,12 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
- 
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
 use Plack::Request;
+use HEG::DB::Result::Feature;
  
 my $app = sub {
     my $env = shift;
