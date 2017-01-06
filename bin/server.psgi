@@ -10,19 +10,18 @@ my $app = sub {
     my $html = get_html();
  
     my $request = Plack::Request->new($env);
-    if ($request->param('field')) {
+    if ($request->param('email')) {
         return sub {
             my $response = shift;
-            my $t;
-            $t = AnyEvent->timer(after => 2, cb => sub {
-                undef $t;
-                $html .= 'You said: ' . $request->param('field') . '<br>';
+
+            $html .= 'Email: '. $request->param('email') . '<br>';
+            $html .= 'Feature: '. $request->param('feature') . '<br>';
                 return $response->([
                     '200',
                     [ 'Content-Type' => 'text/html' ],
                     [ $html ],
                 ]);
-            });
+            
         };
     }
  
@@ -37,8 +36,9 @@ sub get_html {
     return q{
       <form>
  
-      <input name="field">
-      <input type="submit" value="Echo">
+      <input name="email">
+      <input name="feature">
+      <input type="submit" value="Submit">
       </form>
       <hr>
     }
