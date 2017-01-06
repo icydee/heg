@@ -6,6 +6,13 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 
 use Plack::Request;
+use HEG::DB;
+
+my $db_file = "$FindBin::Bin/../etc/db.sql";
+
+my $schema = HEG::DB->connect("dbi:SQLite:$db_file");
+
+
 use HEG::DB::Result::Feature;
  
 my $app = sub {
